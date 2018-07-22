@@ -1,16 +1,29 @@
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 
-const router = Router();
+export default class TransactionController {
+  public router: Router;
+  constructor() {
+    this.router = Router();
+    this.init();
+  }
 
-router.get('/', (req, res, next) => {
-  res.send('Get all transactions');
-});
+  public init() {
+    this.router.get('/', this.getAll);
+    this.router.get('/:id', this.get);
+    this.router.post('/', this.post);
+  }
 
-router.get('/:id', (req, res, next) => {
-  const { id } = req.params;
+  getAll(req: Request, res: Response) {
+    res.send('Get all transactions');
+  }
 
-  res.send(`Get transaction ID: ${id}`);
-});
+  get(req: Request, res: Response) {
+    const { id } = req.params;
 
-// tslint:disable-next-line:variable-name
-export const TransactionController: Router = router;
+    res.send(`Get transaction ID: ${id}`);
+  }
+
+  post(req: Request, res: Response) {
+    res.send(req.body);
+  }
+}

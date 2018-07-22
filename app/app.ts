@@ -1,15 +1,44 @@
+import 'reflect-metadata';
 import express from 'express';
 import morgan from 'morgan';
 import debug from 'debug';
-import 'reflect-metadata';
+
+import { scopePerRequest } from 'awilix-express';
+import awilix = require('awilix');
+import { asClass } from 'awilix';
 import * as bodyParser from 'body-parser';
 
-import { createConnection } from 'typeorm';
-
-import { TransactionController } from './controllers';
-import { User } from './models/user.model';
+import { UserController, TransactionController } from './controllers';
 
 debug('ts-express:server');
+
+const container = awilix.createContainer({
+  injectionMode: awilix.InjectionMode.PROXY,
+});
+
+const formatName = (filename: string) => {
+  console.log(filename);
+  const [ name, type ] = filename.split('.');
+  if (!type) return name;
+  return `${name}${type.charAt(0).toUpperCase()}${type.substring(1)}`;
+}
+
+container.loadModules([
+  '**/*[controller|service|repository].js',
+], {
+  formatName,
+  cwd: `${__dirname}/../build`,
+  resolverOptions: {
+    injectionMode: awilix.InjectionMode.CLASSIC,
+  },
+});
+
+// container.register({
+//   userRepository: asClass(UserRepository).classic(),
+//   userService: asClass(UserService).classic(),
+//   userController: asClass(UserController).classic(),
+//   transactionController: asClass(TransactionController).classic(),
+// });
 
 class App {
   public app: express.Application;
@@ -26,10 +55,15 @@ class App {
     this.app.use(morgan('dev'));
     this.app.use(bodyParser.json());
     this.app.use(bodyParser.urlencoded({ extended: false }));
+    this.app.use(scopePerRequest(container));
   }
 
   private routes() {
-    this.app.use('/api/transactions', TransactionController);
+    this.app.use('/api/users', container.resolve<UserController>('userController').router);
+    // this.app.use('/api/users', container.cradle.userController.router);
+    this.app.use('/api/transactions',
+      container.resolve<TransactionController>('transactionController').router);
+    // this.app.use('/api/transactions', container.cradle.transactionController.router);
   }
 
   private serve() {
@@ -40,17 +74,6 @@ class App {
   }
 
   private database() {
-  //   createConnection().then(async (connection) => {
-  //     const user = new User();
-  //     user.firstName = 'Rodrigo';
-  //     user.lastName = 'Campos';
-  //     user.age = 25;
-  //     await connection.manager.save(user);
-
-  //     const users = await connection.manager.find(User);
-  //     console.log('Users');
-  //     console.log(users);
-  //   }).catch(error => console.log(error));
   }
 }
 
