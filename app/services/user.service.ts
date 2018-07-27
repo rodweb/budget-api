@@ -25,10 +25,8 @@ export default class UserService implements IUserService {
       age,
     } = user;
 
-    const { id } = await this.userRepository.save({
-      ...user,
-      id: 0,
-    });
+    const { id } = await this.userRepository
+      .save({ ...user } as User);
 
     return {
       ...user,

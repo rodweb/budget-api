@@ -1,8 +1,9 @@
 import { Router, Request, Response } from 'express';
+import { ITransactionService } from '../services/transaction.service';
 
 export default class TransactionController {
   public router: Router;
-  constructor() {
+  constructor(private transactionService: ITransactionService) {
     this.router = Router();
     this.init();
   }
@@ -23,7 +24,7 @@ export default class TransactionController {
     res.send(`Get transaction ID: ${id}`);
   }
 
-  post(req: Request, res: Response) {
-    res.send(req.body);
+  post = async(req: Request, res: Response) => {
+    res.json(await this.transactionService.create(req.body));
   }
 }

@@ -18,10 +18,10 @@ const container = awilix.createContainer({
 
 const formatName = (filename: string) => {
   console.log(filename);
-  const [ name, type ] = filename.split('.');
+  const [name, type] = filename.split('.');
   if (!type) return name;
   return `${name}${type.charAt(0).toUpperCase()}${type.substring(1)}`;
-}
+};
 
 container.loadModules([
   '**/*[controller|service|repository].js',
@@ -59,11 +59,9 @@ class App {
   }
 
   private routes() {
-    this.app.use('/api/users', container.resolve<UserController>('userController').router);
-    // this.app.use('/api/users', container.cradle.userController.router);
-    this.app.use('/api/transactions',
-      container.resolve<TransactionController>('transactionController').router);
-    // this.app.use('/api/transactions', container.cradle.transactionController.router);
+    this.app.use('/api/accounts', container.cradle.accountController.router);
+    this.app.use('/api/users', container.cradle.userController.router);
+    this.app.use('/api/transactions', container.cradle.transactionController.router);
   }
 
   private serve() {

@@ -1,6 +1,6 @@
 import { User } from '../models/user.model';
 import { IRepository } from './repository';
-import { Connection, Repository, createConnection } from 'typeorm';
+import { Repository, createConnection } from 'typeorm';
 
 export default class UserRepository implements IRepository<User> {
 
