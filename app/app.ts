@@ -2,13 +2,14 @@ import 'reflect-metadata';
 import express from 'express';
 import morgan from 'morgan';
 import debug from 'debug';
-
-import { scopePerRequest } from 'awilix-express';
 import awilix = require('awilix');
-import { asClass } from 'awilix';
+import graphqlHTTP from 'express-graphql';
+import { scopePerRequest } from 'awilix-express';
 import * as bodyParser from 'body-parser';
-
-import { UserController, TransactionController } from './controllers';
+import { AppSchema } from './schemas/app.schema';
+import { asFunction } from 'awilix';
+import { createConnection, getConnection } from 'typeorm';
+import { create } from 'domain';
 
 debug('ts-express:server');
 
@@ -17,7 +18,6 @@ const container = awilix.createContainer({
 });
 
 const formatName = (filename: string) => {
-  console.log(filename);
   const [name, type] = filename.split('.');
   if (!type) return name;
   return `${name}${type.charAt(0).toUpperCase()}${type.substring(1)}`;
@@ -33,22 +33,16 @@ container.loadModules([
   },
 });
 
-// container.register({
-//   userRepository: asClass(UserRepository).classic(),
-//   userService: asClass(UserService).classic(),
-//   userController: asClass(UserController).classic(),
-//   transactionController: asClass(TransactionController).classic(),
-// });
-
 class App {
-  public app: express.Application;
+  public app!: express.Application;
 
   constructor() {
-    this.database();
-    this.app = express();
-    this.middleware();
-    this.routes();
-    this.serve();
+    this.database().then(() => {
+      this.app = express();
+      this.middleware();
+      this.routes();
+      this.serve();
+    });
   }
 
   private middleware() {
@@ -59,6 +53,11 @@ class App {
   }
 
   private routes() {
+    this.app.use('/graphql', graphqlHTTP({
+      schema: AppSchema,
+      context: container,
+      graphiql: true,
+    }));
     this.app.use('/api/accounts', container.cradle.accountController.router);
     this.app.use('/api/users', container.cradle.userController.router);
     this.app.use('/api/transactions', container.cradle.transactionController.router);
@@ -71,7 +70,16 @@ class App {
     });
   }
 
-  private database() {
+  private async database() {
+    try {
+
+      await createConnection();
+    } catch (error) {
+      console.log(error);
+    }
+    container.register({
+      conn: asFunction(() => getConnection()).singleton(),
+    });
   }
 }
 
