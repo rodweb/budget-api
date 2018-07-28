@@ -4,6 +4,10 @@ import { Account } from '../models/account.model';
 
 import { IRepository } from './repository';
 
+interface IAccountRepository extends IRepository<Account> {
+  findAll(): Promise<Account[]>;
+}
+
 export default class AccountRepository implements IRepository<Account> {
   private repo: Repository<Account>;
 
@@ -12,5 +16,10 @@ export default class AccountRepository implements IRepository<Account> {
   }
 
   find = async(id: number) => this.repo.findOne(id);
+  findAll = async() => this.repo.find();
   save = async(account: Account) => this.repo.save(account);
 }
+
+export {
+  IAccountRepository,
+};

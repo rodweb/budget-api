@@ -1,5 +1,5 @@
-import { IRepository } from '../repositories/repository';
 import { Account } from '../models/account.model';
+import { IAccountRepository } from '../repositories/account.repository';
 
 interface AccountDTO {
   name: string;
@@ -8,14 +8,18 @@ interface AccountDTO {
 interface IAccountService {
   create(account: AccountDTO): Promise<AccountDTO>;
   findOne(id: number): Promise<AccountDTO | undefined>;
+  findByUserId(id: number): Promise<AccountDTO[]>;
 }
 
 export default class AccountService implements IAccountService {
-  constructor(private readonly accountRepository: IRepository<Account>) {
-  }
+  constructor(private readonly accountRepository: IAccountRepository) {}
 
   public async findOne(id: number) {
     return this.accountRepository.find(id);
+  }
+
+  public async findByUserId(id: number) {
+    return this.accountRepository.findAll();
   }
 
   public async create(account: AccountDTO) {
