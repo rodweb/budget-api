@@ -1,4 +1,4 @@
-import { Repository, createConnection } from 'typeorm';
+import { Repository, Connection } from 'typeorm';
 import { Period } from '../models/period.model';
 
 export interface IPeriodRepository {
@@ -7,12 +7,10 @@ export interface IPeriodRepository {
 }
 
 export default class PeriodRepository implements IPeriodRepository {
-  private repo!: Repository<Period>;
+  private repo: Repository<Period>;
 
-  constructor() {
-    createConnection().then((conn) => {
-      this.repo = conn.getRepository(Period);
-    });
+  constructor(private conn: Connection) {
+    this.repo = conn.getRepository(Period);
   }
 
   get = async(year: number, month: number) => this.repo.findOne({ year, month });

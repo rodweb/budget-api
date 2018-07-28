@@ -9,7 +9,6 @@ import * as bodyParser from 'body-parser';
 import { AppSchema } from './schemas/app.schema';
 import { asFunction } from 'awilix';
 import { createConnection, getConnection } from 'typeorm';
-import { create } from 'domain';
 
 debug('ts-express:server');
 
@@ -71,16 +70,20 @@ class App {
   }
 
   private async database() {
-    try {
-
-      await createConnection();
-    } catch (error) {
-      console.log(error);
-    }
+    await createConnection();
     container.register({
       conn: asFunction(() => getConnection()).singleton(),
     });
   }
+}
+
+process.on('SIGTERM', shutdown);
+process.on('SIGINT', shutdown);
+
+function shutdown() {
+  console.log('Received kill signal, shutting down gracefully');
+  getConnection().close().then(() => process.exit(0));
+  setTimeout(() => process.exit(1), 5000);
 }
 
 export default new App().app;
