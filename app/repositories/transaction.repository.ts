@@ -5,9 +5,9 @@ import { Transaction } from '../models/transaction.model';
 import { IRepository } from './repository';
 
 export default class TransactionRepository implements IRepository<Transaction> {
-  private repo!: Repository<Transaction>;
+  private readonly repo: Repository<Transaction>;
 
-  constructor(private conn: Connection) {
+  constructor(private readonly conn: Connection) {
     this.repo = conn.getRepository(Transaction);
   }
 

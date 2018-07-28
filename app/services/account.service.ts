@@ -9,10 +9,13 @@ interface IAccountService {
   create(account: AccountDTO): Promise<AccountDTO>;
   findOne(id: number): Promise<AccountDTO | undefined>;
   findByUserId(id: number): Promise<AccountDTO[]>;
+  findByIds(ids: number[]): Promise<AccountDTO[]>;
 }
 
 export default class AccountService implements IAccountService {
-  constructor(private readonly accountRepository: IAccountRepository) {}
+  constructor(private accountRepository: IAccountRepository) {
+    console.log('New AccountService');
+  }
 
   public async findOne(id: number) {
     return this.accountRepository.find(id);
@@ -20,6 +23,10 @@ export default class AccountService implements IAccountService {
 
   public async findByUserId(id: number) {
     return this.accountRepository.findAll();
+  }
+
+  public findByIds = async (ids: number[]) => {
+    return this.accountRepository.findByIds(ids);
   }
 
   public async create(account: AccountDTO) {

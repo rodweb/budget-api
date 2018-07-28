@@ -2,18 +2,21 @@ import 'reflect-metadata';
 import express from 'express';
 import morgan from 'morgan';
 import debug from 'debug';
-import awilix = require('awilix');
 import graphqlHTTP from 'express-graphql';
+import awilix = require('awilix');
 import { scopePerRequest } from 'awilix-express';
 import * as bodyParser from 'body-parser';
-import { AppSchema } from './schemas/app.schema';
+import DataLoader from 'dataloader';
 import { asFunction } from 'awilix';
 import { createConnection, getConnection } from 'typeorm';
+
+import { AppSchema } from './schemas/app.schema';
+import { IAccountService } from './services/account.service';
 
 debug('ts-express:server');
 
 const container = awilix.createContainer({
-  injectionMode: awilix.InjectionMode.PROXY,
+  injectionMode: awilix.InjectionMode.CLASSIC,
 });
 
 const formatName = (filename: string) => {
@@ -28,7 +31,7 @@ container.loadModules([
   formatName,
   cwd: `${__dirname}/../build`,
   resolverOptions: {
-    injectionMode: awilix.InjectionMode.CLASSIC,
+    lifetime: awilix.Lifetime.SCOPED,
   },
 });
 
@@ -37,10 +40,20 @@ class App {
 
   constructor() {
     this.database().then(() => {
+      this.injection();
       this.app = express();
       this.middleware();
       this.routes();
       this.serve();
+    });
+  }
+
+  private injection() {
+    container.register({
+      conn: asFunction(() => getConnection()).singleton(),
+      loaders: asFunction((accountService: IAccountService) => ({
+        getAccountByIds: new DataLoader(accountService.findByIds),
+      })).scoped(),
     });
   }
 
@@ -71,9 +84,6 @@ class App {
 
   private async database() {
     await createConnection();
-    container.register({
-      conn: asFunction(() => getConnection()).singleton(),
-    });
   }
 }
 

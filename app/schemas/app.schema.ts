@@ -70,8 +70,9 @@ export const AppSchema = new GraphQLSchema({
           id: { type: GraphQLInt },
         },
         resolve(value, args, container: AwilixContainer) {
-          const accountService = container.resolve<IAccountService>('accountService');
-          return accountService.findOne(args.id);
+          console.log('Resolving Account');
+          const loaders = container.resolve('loaders') as any;
+          return loaders.getAccountByIds.load(args.id);
         },
       },
       accounts: {
