@@ -18,7 +18,8 @@ export default class AccountService implements IAccountService {
   }
 
   public async findOne(id: number) {
-    return this.accountRepository.find(id);
+    // return this.accountRepository.find(id);
+    return this.accountRepository.findByIds([id]).then(x => x[0]);
   }
 
   public async findByUserId(id: number) {

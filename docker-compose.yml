@@ -3,12 +3,10 @@ services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.3.2
     ports: ['127.0.0.1:9200:9200']
-    environment: ['http.host=0.0.0.0', 'transport.host=127.0.0.1']
 
   postgres:
     image: postgres
     ports: ['127.0.0.1:5432:5432']
-    environment: ['http.host=0.0.0.0', 'transport.host=127.0.0.1']
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -19,4 +17,3 @@ services:
   redis:
     image: redis
     ports: ['127.0.0.1:6379:6379']
-    environment: ['http.host=0.0.0.0', 'transport.host=127.0.0.1']
