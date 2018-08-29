@@ -4,7 +4,8 @@
   "jsRules": {},
   "rules": {
     "align": false,
-    "import-name": false
+    "import-name": false,
+    "semicolon": [true, "never"]
   },
   "rulesDirectory": []
 }

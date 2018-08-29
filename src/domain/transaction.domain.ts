@@ -1,24 +1,29 @@
-import { Account } from './account.domain';
+import { Account } from './account.domain'
 
-type Credit = 'credit';
-type Debit = 'debit';
-type TransactionType = Credit | Debit;
+enum TransactionType {
+  Credit,
+  Debit,
+}
 
-const CREDIT = 'credit' as Credit;
-const DEBIT = 'debit' as Debit;
+class Transaction {
+  id?: number
+  description: string
+  amount: number
+  // date: Date
+  // payee: Payee
+  from: Account
+  to: Account
 
-interface Transaction {
-  id?: number;
-  description: string;
-  amount: number;
-  type: TransactionType,
-  to: Account,
-  from?: Account,
+  constructor(
+    description: string, amount: number, from: Account, to: Account) {
+    this.description = description
+    this.amount = amount
+    this.from = from
+    this.to = to
+  }
 }
 
 export {
   TransactionType,
   Transaction,
-  CREDIT,
-  DEBIT,
-};
+}

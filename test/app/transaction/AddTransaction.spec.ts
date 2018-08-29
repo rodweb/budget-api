@@ -9,7 +9,7 @@ const expect = require('chai').expect;
 
 describe('Adding transaction', () => {
   describe('When valid transaction info is passed', () => {
-    it('Should create account', async () => {
+    it('Should create from', async () => {
       const validTransaction: Transaction = {
         description: 'Salary',
         amount: 1000,
@@ -26,8 +26,8 @@ describe('Adding transaction', () => {
         .returns(() => Promise.resolve(validTransaction));
 
       // @ts-ignore
-      const addTransactionUsecase = new AddTransactionUseCase(mock.object);
-      const result = await addTransactionUsecase.execute(validTransaction);
+      const addTransactionUseCase = new AddTransactionUseCase(mock.object);
+      const result = await addTransactionUseCase.execute(validTransaction);
 
       expect(result).to.be.equals(validTransaction);
     });
