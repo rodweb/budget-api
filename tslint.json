@@ -5,7 +5,8 @@
   "rules": {
     "align": false,
     "import-name": false,
-    "semicolon": [true, "never"]
+    "semicolon": [true, "never"],
+    "variable-name": [true, "allow-leading-underscore"]
   },
   "rulesDirectory": []
 }

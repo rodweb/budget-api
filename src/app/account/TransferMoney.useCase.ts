@@ -6,8 +6,9 @@ type Amount = number
 type Description = string
 
 export class TransferMoneyUseCase {
-  constructor(private uow: IUnitOfWork,
-              private accountRepository: IAccountRepository) {
+  constructor(
+    private uow: IUnitOfWork,
+    private accountRepository: IAccountRepository) {
   }
 
   execute = async (from: AccountId, to: AccountId, description: Description, amount: Amount) => {

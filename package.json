@@ -34,6 +34,7 @@
     "typescript": "^2.9.2"
   },
   "dependencies": {
+    "@types/uuid": "^3.4.4",
     "awilix": "^3.0.9",
     "awilix-express": "^1.1.0",
     "body-parser": "^1.18.3",
@@ -42,9 +43,11 @@
     "express": "^4.16.3",
     "express-graphql": "^0.6.12",
     "graphql": "^0.13.2",
+    "guid-typescript": "^1.0.7",
     "morgan": "^1.9.0",
     "pg": "^7.4.3",
     "reflect-metadata": "^0.1.12",
-    "typeorm": "^0.2.7"
+    "typeorm": "^0.2.7",
+    "uuid": "^3.3.2"
   }
 }

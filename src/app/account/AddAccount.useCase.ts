@@ -4,8 +4,9 @@ import { IUnitOfWork } from '../ports/drivingAdapters/IUnitOfWork'
 
 export class AddAccountUseCase {
 
-  constructor(private uow: IUnitOfWork,
-              private accountRepository: IAccountRepository) {
+  constructor(
+    private uow: IUnitOfWork,
+    private accountRepository: IAccountRepository) {
   }
 
   execute = async (accountName: string) => {
