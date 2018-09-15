@@ -2,18 +2,13 @@ import 'reflect-metadata'
 import express from 'express'
 import morgan from 'morgan'
 import debug from 'debug'
-import graphqlHTTP from 'express-graphql'
 import awilix = require('awilix')
 import { scopePerRequest } from 'awilix-express'
 import * as bodyParser from 'body-parser'
-import DataLoader from 'dataloader'
 import { asFunction } from 'awilix'
 import { createConnection, getConnection } from 'typeorm'
 
-import { AppSchema } from './schemas/app.schema'
-import { IAccountService } from './services/account.service'
 import { EventEmitter } from 'events'
-import { ITransactionRepository } from './repositories/transaction.repository'
 
 debug('ts-express:server')
 
@@ -55,11 +50,6 @@ class App {
     container.register({
       conn: asFunction(() => getConnection()).singleton(),
       event: asFunction(() => new EventEmitter()).singleton(),
-      loaders: asFunction((accountService: IAccountService,
-                           transactionRepository: ITransactionRepository) => ({
-                             getAccountByIds: new DataLoader(accountService.findByIds),
-                             getTransactionsByIds: new DataLoader(transactionRepository.findByIds),
-                           })).scoped(),
     })
   }
 
@@ -71,11 +61,6 @@ class App {
   }
 
   private routes() {
-    this.app.use('/graphql', graphqlHTTP({
-      schema: AppSchema,
-      context: container,
-      graphiql: true,
-    }))
     this.app.use('/api/accounts', container.cradle.accountController.router)
     this.app.use('/api/users', container.cradle.userController.router)
     this.app.use('/api/transactions', container.cradle.transactionController.router)

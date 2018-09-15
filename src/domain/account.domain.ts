@@ -1,4 +1,4 @@
-import { Transaction, TransactionType } from './Transaction.domain'
+import { Transaction, TransactionType } from './transaction.domain'
 import { TransactionFactory } from './Transaction.factory'
 
 class Account {

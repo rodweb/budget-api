@@ -1,4 +1,4 @@
-import { Account } from '../../../domain/Account.domain'
+import { Account } from '../../../domain/account.domain'
 
 export interface IAccountRepository {
   add(account: Account): void,
